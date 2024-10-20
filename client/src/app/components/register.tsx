@@ -1,8 +1,24 @@
 "use client";
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  CardFooter,
+} from "@/components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useToast } from "@/hooks/use-toast";
 
 type FormData = {
   name: string;
@@ -10,15 +26,20 @@ type FormData = {
   password: string;
   confirmPassword: string;
   role: "user" | "lawyer";
+  specialization?: string;
+  experience?: number;
+  hourly_rate?: number;
+  availability?: string;
 };
 
 export default function RegisterPage() {
+  const { toast } = useToast(); // For displaying alerts/toasts
   const [formData, setFormData] = useState<FormData>({
     name: "",
     email: "",
     password: "",
     confirmPassword: "",
-    role: "user", 
+    role: "user",
   });
 
   const handleInputChange = (
@@ -31,13 +52,17 @@ export default function RegisterPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Example: Basic form validation
+    // Basic validation: Check if passwords match
     if (formData.password !== formData.confirmPassword) {
-      alert("Passwords don't match!");
+      toast({
+        title: "Error",
+        description: "Passwords do not match",
+        variant: "destructive",
+      });
       return;
     }
 
-    // Send form data to Flask backend
+    // Submit form data to the backend
     const response = await fetch("http://localhost:5000/api/register", {
       method: "POST",
       headers: {
@@ -47,108 +72,155 @@ export default function RegisterPage() {
     });
 
     const result = await response.json();
+    toast({
+      title: "Success",
+      description: "Registration completed successfully!",
+    });
     console.log(result);
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100 p-4">
-      <div className="bg-white shadow-lg rounded-lg p-8 max-w-lg w-full space-y-6">
-        <h1 className="text-3xl font-semibold text-gray-800 text-center">
-          Register
-        </h1>
-        <p className="text-gray-500 text-center">
-          Create your account as a User or Lawyer.
-        </p>
+    <div className="flex min-h-screen items-center justify-center bg-gray-50">
+      <Card className="w-full max-w-lg shadow-lg rounded-lg">
+        <CardHeader>
+          <CardTitle className="text-center text-2xl font-bold">
+            Register
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Full Name */}
+            <div className="flex flex-col space-y-2">
+              <Label htmlFor="name">Full Name</Label>
+              <Input
+                id="name"
+                name="name"
+                type="text"
+                value={formData.name}
+                onChange={handleInputChange}
+                placeholder="Enter your full name"
+                required
+              />
+            </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div>
-            <Label htmlFor="name" className="text-gray-600">
-              Full Name
-            </Label>
-            <Input
-              id="name"
-              name="name"
-              type="text"
-              value={formData.name}
-              onChange={handleInputChange}
-              required
-              className="mt-2"
-            />
-          </div>
+            {/* Email */}
+            <div className="flex flex-col space-y-2">
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+                name="email"
+                type="email"
+                value={formData.email}
+                onChange={handleInputChange}
+                placeholder="Enter your email"
+                required
+              />
+            </div>
 
-          <div>
-            <Label htmlFor="email" className="text-gray-600">
-              Email
-            </Label>
-            <Input
-              id="email"
-              name="email"
-              type="email"
-              value={formData.email}
-              onChange={handleInputChange}
-              required
-              className="mt-2"
-            />
-          </div>
+            {/* Password */}
+            <div className="flex flex-col space-y-2">
+              <Label htmlFor="password">Password</Label>
+              <Input
+                id="password"
+                name="password"
+                type="password"
+                value={formData.password}
+                onChange={handleInputChange}
+                placeholder="Enter your password"
+                required
+              />
+            </div>
 
-          <div>
-            <Label htmlFor="password" className="text-gray-600">
-              Password
-            </Label>
-            <Input
-              id="password"
-              name="password"
-              type="password"
-              value={formData.password}
-              onChange={handleInputChange}
-              required
-              className="mt-2"
-            />
-          </div>
+            {/* Confirm Password */}
+            <div className="flex flex-col space-y-2">
+              <Label htmlFor="confirmPassword">Confirm Password</Label>
+              <Input
+                id="confirmPassword"
+                name="confirmPassword"
+                type="password"
+                value={formData.confirmPassword}
+                onChange={handleInputChange}
+                placeholder="Confirm your password"
+                required
+              />
+            </div>
 
-          <div>
-            <Label htmlFor="confirmPassword" className="text-gray-600">
-              Confirm Password
-            </Label>
-            <Input
-              id="confirmPassword"
-              name="confirmPassword"
-              type="password"
-              value={formData.confirmPassword}
-              onChange={handleInputChange}
-              required
-              className="mt-2"
-            />
-          </div>
+            {/* Role Selection */}
+            <div className="flex flex-col space-y-2">
+              <Label htmlFor="role">Register as:</Label>
+              <Select
+                onValueChange={(value) =>
+                  setFormData({ ...formData, role: value as "user" | "lawyer" })
+                }
+                value={formData.role}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select a role" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="user">User</SelectItem>
+                  <SelectItem value="lawyer">Lawyer</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
 
-          <div>
-            <Label htmlFor="role" className="text-gray-600">
-              Register as:
-            </Label>
-            <select
-              id="role"
-              name="role"
-              value={formData.role}
-              onChange={handleInputChange}
-              className="mt-2 w-full p-2 border border-gray-300 rounded-lg"
-            >
-              <option value="user">User</option>
-              <option value="lawyer">Lawyer</option>
-            </select>
-          </div>
-
-          <Button type="submit" className="w-full py-3">
+            {/* Lawyer-specific fields */}
+            {formData.role === "lawyer" && (
+              <>
+                <div className="flex flex-col space-y-2">
+                  <Label htmlFor="specialization">Specialization</Label>
+                  <Input
+                    id="specialization"
+                    name="specialization"
+                    type="text"
+                    value={formData.specialization || ""}
+                    onChange={handleInputChange}
+                    placeholder="Enter your specialization"
+                  />
+                </div>
+                <div className="flex flex-col space-y-2">
+                  <Label htmlFor="experience">Experience (years)</Label>
+                  <Input
+                    id="experience"
+                    name="experience"
+                    type="number"
+                    value={formData.experience || ""}
+                    onChange={handleInputChange}
+                    placeholder="Enter your experience"
+                  />
+                </div>
+                <div className="flex flex-col space-y-2">
+                  <Label htmlFor="hourly_rate">Hourly Rate ($)</Label>
+                  <Input
+                    id="hourly_rate"
+                    name="hourly_rate"
+                    type="number"
+                    value={formData.hourly_rate || ""}
+                    onChange={handleInputChange}
+                    placeholder="Enter your hourly rate"
+                  />
+                </div>
+                <div className="flex flex-col space-y-2">
+                  <Label htmlFor="availability">Availability</Label>
+                  <Input
+                    id="availability"
+                    name="availability"
+                    type="text"
+                    value={formData.availability || ""}
+                    onChange={handleInputChange}
+                    placeholder="Enter your availability"
+                  />
+                </div>
+              </>
+            )}
+          </form>
+        </CardContent>
+        <CardFooter className="flex justify-center">
+          <Button onClick={handleSubmit} className="w-full max-w-sm">
             Register
           </Button>
-        </form>
-
-        <p className="text-sm text-gray-500 text-center">
-          Already have an account?{" "}
-          <a href="/login" className="text-blue-500 hover:underline">
-            Login here
-          </a>
-        </p>
-      </div>
+        </CardFooter>
+      </Card>
     </div>
   );
 }
