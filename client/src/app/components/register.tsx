@@ -30,6 +30,7 @@ type FormData = {
   experience?: number;
   hourly_rate?: number;
   availability?: string;
+  bio?:string;
 };
 
 export default function RegisterPage() {
@@ -78,6 +79,7 @@ export default function RegisterPage() {
     });
     console.log(result);
   };
+  console.log(formData.bio)
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50">
@@ -167,6 +169,19 @@ export default function RegisterPage() {
             {/* Lawyer-specific fields */}
             {formData.role === "lawyer" && (
               <>
+                <div className="flex flex-col space-y-2">
+                  <Label htmlFor="specialization">Bio</Label>
+                  <Input
+                    id="bio"
+                    name="bio"
+                    type="textarea"
+                    value={formData.bio || ""}
+                    onChange={handleInputChange}
+                    placeholder="Enter your Bio"
+                  />
+                </div>
+
+
                 <div className="flex flex-col space-y-2">
                   <Label htmlFor="specialization">Specialization</Label>
                   <Input
