@@ -12,7 +12,7 @@ class User(db.Model):
 
     # Relationships
     lawyer = db.relationship('Lawyer', backref='user', uselist=False)
-
+    
 class Lawyer(db.Model):
     __tablename__ = 'lawyer'
     lawyer_id = db.Column(db.Integer, primary_key=True)  # Changed to lawyer_id
@@ -20,6 +20,7 @@ class Lawyer(db.Model):
     experience = db.Column(db.Integer, nullable=False)
     hourly_rate = db.Column(db.Float, nullable=False)
     availability = db.Column(db.JSON)
+    bio = db.Column(db.Text, nullable=True)  # Adding bio field
 
     # Foreign key
     user_id = db.Column(db.Integer, db.ForeignKey('user.user_id'))  # Refers to user_id in User
@@ -27,6 +28,7 @@ class Lawyer(db.Model):
     # Relationships
     services = db.relationship('Service', backref='lawyer')
     bookings = db.relationship('Booking', backref='lawyer')
+
 
 class Service(db.Model):
     __tablename__ = 'service'
