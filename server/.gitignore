@@ -1,2 +1,2 @@
-git rm -r --cached server/venv
-git rm -r --cached client/node_modules
+/venv
+/node_modules

@@ -1,18 +1,55 @@
-from flask import Blueprint, jsonify, request
+
+# In your api/lawyers.py
+from flask import Blueprint, jsonify
 from models import db, Lawyer
 
-# Create a Blueprint for Lawyer routes
 lawyers_bp = Blueprint('lawyers', __name__)
 
 @lawyers_bp.route('/lawyers', methods=['GET'])
 def get_lawyers():
     lawyers = Lawyer.query.all()
-    return jsonify([{"id": lawyer.id, "specialization": lawyer.specialization, "experience": lawyer.experience} for lawyer in lawyers])
+    lawyer_data = []
+    for lawyer in lawyers:
+        lawyer_data.append({
+            "lawyer_id": lawyer.lawyer_id,
+            "name": lawyer.user.name,  # Accessing user's name through relationship
+            "specialization": lawyer.specialization,
+            "experience": lawyer.experience,
+            "hourly_rate": lawyer.hourly_rate,
+            "availability": lawyer.availability,
+        })
+    return jsonify({"lawyers": lawyer_data}), 200
 
-@lawyers_bp.route('/lawyers', methods=['POST'])
-def create_lawyer():
-    data = request.get_json()
-    new_lawyer = Lawyer(specialization=data['specialization'], experience=data['experience'], hourly_rate=data['hourly_rate'], user_id=data['user_id'])
-    db.session.add(new_lawyer)
-    db.session.commit()
-    return jsonify({"message": "Lawyer created successfully"}), 201
+
+
+@lawyers_bp.route('/lawyers/<int:lawyer_id>', methods=['GET'])
+def get_lawyer(lawyer_id):
+    lawyer = Lawyer.query.filter_by(lawyer_id=lawyer_id).first()
+    if not lawyer:
+        return jsonify({"error": "Lawyer not found"}), 404
+
+    # Fetch associated services
+    services = [
+        {
+            "service_id": service.service_id,
+            "title": service.title,
+            "description": service.description,
+            "price": service.price
+        } for service in lawyer.services
+    ]
+
+    lawyer_data = {
+        "lawyer_id": lawyer.lawyer_id,
+        "specialization": lawyer.specialization,
+        "experience": lawyer.experience,
+        "hourly_rate": lawyer.hourly_rate,
+        "availability": lawyer.availability,
+        "bio": lawyer.bio,
+        "services": services,  # Include the services in the response
+        "user": {
+            "name": lawyer.user.name,
+            "email": lawyer.user.email,
+            "role": lawyer.user.role
+        }
+    }
+    return jsonify({"lawyer": lawyer_data}), 200
