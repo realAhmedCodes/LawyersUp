@@ -11,7 +11,7 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { useRouter } from "next/router"; // To navigate post-login
+import { useRouter } from "next/navigation";
 
 type FormData = {
   email: string;
