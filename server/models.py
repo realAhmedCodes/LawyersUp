@@ -45,6 +45,8 @@ class Booking(db.Model):
     booking_id = db.Column(db.Integer, primary_key=True)  # Changed to booking_id
     user_id = db.Column(db.Integer, db.ForeignKey('user.user_id'))  # Refers to user_id in User
     lawyer_id = db.Column(db.Integer, db.ForeignKey('lawyer.lawyer_id'))  # Refers to lawyer_id in Lawyer
+    caseType = db.Column(db.String(20), nullable=False)  # Nullable should be outside of db.String
+    description = db.Column(db.String(255), nullable=False)  # Nullable should be outside of db.String
     start_time = db.Column(db.DateTime, nullable=False)
     end_time = db.Column(db.DateTime, nullable=False)
     status = db.Column(db.String(20), nullable=False)
