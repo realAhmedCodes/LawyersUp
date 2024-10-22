@@ -16,8 +16,11 @@ import { useToast } from "@/hooks/use-toast";
 type FormData = {
   startTime: string;
   endTime: string;
-  userId: number;
-  lawyerId: number;
+  user_id: number;
+  lawyer_id: number;
+  caseType: string;
+  description: string;
+  status: string; // Include status in the form data type
 };
 
 type TokenData = {
@@ -36,13 +39,19 @@ export default function BookingPage({
   const { toast } = useToast();
   const [token, setToken] = useState<string | null>(null);
   const [userId, setUserId] = useState<number>(0);
+
+  // Set default status as 'pending'
   const [formData, setFormData] = useState<FormData>({
     startTime: "",
     endTime: "",
-    userId: 0,
-    lawyerId: lawyerId,
+    user_id: 0,
+    lawyer_id: lawyerId,
+    caseType: "",
+    description: "",
+    status: "pending", // Default status
   });
 
+  // Set the user ID from token
   useEffect(() => {
     const tokenFromStorage = window.sessionStorage.getItem("token");
     if (tokenFromStorage) {
@@ -51,7 +60,7 @@ export default function BookingPage({
       setUserId(decodedToken.user_id);
       setFormData((prevData) => ({
         ...prevData,
-        userId: decodedToken.user_id,
+        user_id: decodedToken.user_id,
       }));
     }
   }, [lawyerId]);
@@ -64,12 +73,12 @@ export default function BookingPage({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const response = await fetch("http://localhost:5000/api/book", {
+    const response = await fetch("http://localhost:5000/api/booking", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(formData),
+      body: JSON.stringify(formData), // Send the formData with status included
     });
 
     if (response.ok) {
@@ -87,6 +96,8 @@ export default function BookingPage({
     }
   };
 
+  console.log(formData);
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent>
@@ -98,6 +109,28 @@ export default function BookingPage({
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="flex flex-col space-y-2">
+            <Label htmlFor="caseType">Case Type</Label>
+            <Input
+              id="caseType"
+              name="caseType"
+              type="text"
+              value={formData.caseType}
+              onChange={handleInputChange}
+              placeholder="Enter Case Type"
+            />
+          </div>
+          <div className="flex flex-col space-y-2">
+            <Label htmlFor="description">Description</Label>
+            <Input
+              id="description"
+              name="description"
+              type="textarea"
+              value={formData.description}
+              onChange={handleInputChange}
+              placeholder="Enter Description"
+            />
+          </div>
           <div className="flex flex-col space-y-2">
             <Label htmlFor="startTime">Start Time</Label>
             <Input
