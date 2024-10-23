@@ -16,10 +16,12 @@ class User(db.Model):
 class Lawyer(db.Model):
     __tablename__ = 'lawyer'
     lawyer_id = db.Column(db.Integer, primary_key=True)  # Changed to lawyer_id
+    education=db.Column(db.String(55), nullable=True)
     specialization = db.Column(db.String(120), nullable=False)
     experience = db.Column(db.Integer, nullable=False)
     hourly_rate = db.Column(db.Float, nullable=False)
     availability = db.Column(db.JSON)
+    location=db.Column(db.String(55), nullable=True)
     bio = db.Column(db.Text, nullable=True)  # Adding bio field
 
     # Foreign key
