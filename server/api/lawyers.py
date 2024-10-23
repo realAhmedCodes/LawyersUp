@@ -44,6 +44,8 @@ def get_lawyer(lawyer_id):
         "experience": lawyer.experience,
         "hourly_rate": lawyer.hourly_rate,
         "availability": lawyer.availability,
+        "education": lawyer.education,
+        "location":lawyer.location,
         "bio": lawyer.bio,
         "services": services,  # Include the services in the response
         "user": {

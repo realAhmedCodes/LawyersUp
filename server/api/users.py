@@ -27,9 +27,11 @@ def register():
     hourly_rate = data.get('hourly_rate', None)
     availability = data.get('availability', None)
     bio = data.get('bio', None)
+    location= data.get('location', None)
+    education= data.get('education', None)
 
     # Basic validation
-    if not name or not email or not password or not role:
+    if not name or not email or not password or not role or not education or not location:
         return jsonify({"error": "Missing required fields"}), 400
 
     # Check if user already exists
@@ -58,6 +60,8 @@ def register():
             hourly_rate=hourly_rate,
             availability=availability,
             bio=bio,
+            location=location,
+            education=education,
             user_id=new_user.user_id  # Link to the User using user_id
         )
         db.session.add(new_lawyer)

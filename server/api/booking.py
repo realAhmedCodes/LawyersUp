@@ -138,6 +138,9 @@ def update_booking_status(booking_id):
     data = request.get_json()
     status = data.get('status')
 
+    print(f"Received status: {status}")
+   
+
     # Find the booking by booking_id
     booking = Booking.query.get(booking_id)
 
