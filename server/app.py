@@ -29,11 +29,13 @@ from api.users import users_bp
 from api.lawyers import lawyers_bp
 from api.services import services_bp
 from api.booking import bookings_bp
+from api.review import reviews_bp
 
 # Register Blueprints
 app.register_blueprint(users_bp, url_prefix='/api')
 app.register_blueprint(lawyers_bp, url_prefix='/api')
 app.register_blueprint(services_bp, url_prefix='/api')
 app.register_blueprint(bookings_bp, url_prefix='/api')
+app.register_blueprint(reviews_bp, url_prefix='/api')
 if __name__ == '__main__':
     app.run(debug=True)
