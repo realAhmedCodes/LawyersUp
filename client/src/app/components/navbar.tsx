@@ -54,7 +54,7 @@ export default function Navbar() {
   }, []);
 
   return (
-    <nav className="bg-primary text-primary-foreground shadow-md px-8 py-4">
+    <nav className="bg-navBlue  text-primary-foreground shadow-md px-8 py-4">
       <div className="container mx-auto flex justify-between items-center">
         {/* Logo */}
         <Link href="/" className="text-2xl font-bold text-white">
